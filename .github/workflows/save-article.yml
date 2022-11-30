@@ -1,0 +1,38 @@
+name: Save article
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 16 * * *"
+
+jobs:
+  save:
+    name: Save
+    runs-on: ubuntu-latest
+    env:
+      HTML_FOLDER_ID: ${{ secrets.HTML_FOLDER_ID }}
+      LOG_FOLDER_ID: ${{ secrets.LOG_FOLDER_ID }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+      SA_KEY_FILE: ${{ secrets.SA_KEY_FILE }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Translate secrets of base64 into json
+        env:
+          SA_KEY: "${{ secrets.SA_KEY }}"
+        run: |
+          echo -n $SA_KEY | base64 --decode > $SA_KEY_FILE
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e ./
+
+      - name: Scraping and Save article to Google Drive
+        run: |
+          export WORKING_DIR=$PWD
+          python periodically/main.py

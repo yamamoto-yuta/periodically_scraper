@@ -1,0 +1,14 @@
+.*
+.*/
+*.egg-info/
+__pycache__/
+*.log
+client_secrets.json
+credentials.json
+settings.yaml
+
+!.github/
+!.gitignore
+!.env.sample
+!.keep
+!.bashrc

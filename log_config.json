@@ -1,0 +1,36 @@
+{
+    "version": 1,
+    "disable_existing_loggers": false,
+    "formatters": {
+        "simple": {
+            "format": "%(asctime)s %(name)s:%(lineno)s %(module)s %(funcName)s [%(levelname)s]: %(message)s"
+        }
+    },
+    "handlers": {
+        "consoleHandler": {
+            "class": "logging.StreamHandler",
+            "level": "WARNING",
+            "formatter": "simple",
+            "stream": "ext://sys.stdout"
+        },
+        "fileHandler": {
+            "class": "logging.FileHandler",
+            "level": "INFO",
+            "formatter": "simple",
+            "filename": "log.log"
+        }
+    },
+    "loggers": {
+        "file_logger": {
+            "level": "DEBUG",
+            "handlers": [
+                "consoleHandler",
+                "fileHandler"
+            ],
+            "propagate": false
+        }
+    },
+    "root": {
+        "level": "INFO"
+    }
+}

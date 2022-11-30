@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    image: periodically_scraper
+    container_name: periodically_scraper
+    volumes:
+      - type: bind
+        source: ./
+        target: ${WORKING_DIR}/
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+      - "8888:8888" # for Jupyter Lab
+    command: bash -c "pip install -e ${WORKING_DIR} && tail -f /dev/null"

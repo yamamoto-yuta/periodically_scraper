@@ -1,0 +1,21 @@
+# Utils
+numpy
+pandas
+tqdm
+pytz
+classopt
+
+# Scraping
+requests
+beautifulsoup4
+lxml
+
+# Storage
+PyDrive2
+
+# Testing
+pytest
+pytest-mock
+
+# Development
+jupyterlab

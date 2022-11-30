@@ -1,0 +1,64 @@
+name: Run Test
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    env:
+      LOG_FOLDER_ID: ${{ secrets.LOG_FOLDER_ID }}
+      TEST_FOLDER_ID: ${{ secrets.TEST_FOLDER_ID }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SA_KEY_FILE: ${{ secrets.SA_KEY_FILE }}
+    strategy:
+      matrix:
+        python-version: ["3.7"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Translate secrets of base64 into json
+        env:
+          SA_KEY: "${{ secrets.SA_KEY }}"
+        run: |
+          echo -n $SA_KEY | base64 --decode > $SA_KEY_FILE
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e ./
+
+      - name: Run test
+        run: |
+          export WORKING_DIR=$PWD
+          pytest --junit-xml results/pytest.xml
+        continue-on-error: true
+
+      - name: Upload Unit Test Results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: Unit Test Results
+          path: results/*.xml
+
+      - name: Download Artifacts
+        if: success() || failure()
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        with:
+          files: artifacts/**/*.xml
