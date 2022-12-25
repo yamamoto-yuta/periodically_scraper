@@ -2,8 +2,8 @@ name: Save article
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 16 * * *"
+#   schedule:
+#     - cron: "0 16 * * *"
 
 jobs:
   save:
